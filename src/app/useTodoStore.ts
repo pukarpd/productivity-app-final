@@ -36,4 +36,3 @@ export const useTodoStore = create<TodoStore>((set) => ({
       todos: state.todos.filter((todo) => todo.id !== id),
     })),
 }));
-//asd
