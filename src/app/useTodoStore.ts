@@ -1,25 +1,29 @@
-// Zustand store for managing global state of todos
 import { create } from "zustand";
 
 interface Todo {
   id: number;
   text: string;
   completed: boolean;
+  dueDate?: string;
 }
 
 interface TodoStore {
   todos: Todo[];
-  addTodo: (text: string) => void;
+  addTodo: (todo: { text: string; dueDate?: string }) => void;
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
 }
 
-// Zustand store to manage todo operations
 export const useTodoStore = create<TodoStore>((set) => ({
   todos: [],
-  addTodo: (text) =>
+  addTodo: ({ text, dueDate }) =>
     set((state) => ({
-      todos: [...state.todos, { id: Date.now(), text, completed: false }],
+      todos: [...state.todos, { 
+        id: Date.now(), 
+        text, 
+        completed: false,  
+        dueDate 
+      }],
     })),
   toggleTodo: (id) =>
     set((state) => ({
@@ -32,3 +36,4 @@ export const useTodoStore = create<TodoStore>((set) => ({
       todos: state.todos.filter((todo) => todo.id !== id),
     })),
 }));
+//asd
