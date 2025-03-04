@@ -1,6 +1,6 @@
 import TodoItem from "./TodoItem";
 import { useTodoStore } from "@/app/useTodoStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface TodoListProps {
   todos: { 
@@ -11,12 +11,21 @@ interface TodoListProps {
   }[];
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
-  isDark: boolean;
 }
 
-export default function TodoList({ todos, toggleTodo, deleteTodo, isDark }: TodoListProps) {
+export default function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProps) {
   const { clearCompleted } = useTodoStore();
   const [sortBy, setSortBy] = useState<"default" | "dueDate">("default");
+  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsDark(localStorage.getItem("theme") === "dark");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   // Sort todos based on the selected option
   const sortedTodos = [...todos].sort((a, b) => {
@@ -75,7 +84,6 @@ export default function TodoList({ todos, toggleTodo, deleteTodo, isDark }: Todo
             todo={todo} 
             toggleTodo={toggleTodo} 
             deleteTodo={deleteTodo}
-            isDark={isDark}
           />
         ))
       )}

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle, Settings, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTodoStore } from "@/app/useTodoStore"; // Import the store
 
 interface SubTask {
@@ -17,16 +17,25 @@ interface TodoItemProps {
     text: string;
     completed: boolean;
     dueDate?: string;
-    subTasks?: SubTask[]; // Add subTasks to the todo type
+    subTasks?: SubTask[];
   };
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
-  isDark: boolean;
 }
 
-export default function TodoItem({ todo, toggleTodo, deleteTodo, isDark }: TodoItemProps) {
+export default function TodoItem({ todo, toggleTodo, deleteTodo }: TodoItemProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const { toggleSubTask } = useTodoStore(); // Access the toggleSubTask action
+  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsDark(localStorage.getItem("theme") === "dark");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const handleGearClick = () => {
     setIsSpinning(true);
@@ -55,25 +64,23 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isDark }: TodoI
               strokeWidth={todo.completed ? 2.5 : 1.5}
             />
           </button>
-          <div className="flex flex-col flex-1">
+          
+          {/* Scrollable Task Text */}
+          <div 
+            className="flex-1 overflow-y-auto max-h-20 p-2 rounded-lg scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
+            style={{
+              wordBreak: "break-word",
+              scrollbarWidth: "thin",
+              scrollbarColor: isDark ? "#4b5563 #1f2937" : "#888 #f1f1f1"
+            }}
+          >
             <span
-              className={`${
-                todo.completed
-                  ? "line-through text-gray-400"
-                  : isDark
-                  ? "text-white"
-                  : "text-blue-900"
+              className={`block ${
+                todo.completed ? "line-through text-gray-400" : isDark ? "text-white" : "text-blue-900"
               }`}
             >
               {todo.text}
             </span>
-            {todo.dueDate && (
-              <span
-                className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}
-              >
-                Due: {new Date(todo.dueDate).toLocaleDateString()}
-              </span>
-            )}
           </div>
         </div>
 
