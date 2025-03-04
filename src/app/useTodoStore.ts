@@ -33,7 +33,7 @@ export const useTodoStore = create<TodoStore>((set) => ({
           id: Date.now(),
           text,
           completed: false,
-          dueDate,
+          dueDate: dueDate || undefined,
           subTasks: subTasks?.map((subText, index) => ({
             id: Date.now() + index, // Unique ID for each sub-task
             text: subText,

@@ -65,24 +65,23 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo }: TodoItemProps
             />
           </button>
           
-          {/* Scrollable Task Text */}
-          <div 
-            className="flex-1 overflow-y-auto max-h-20 p-2 rounded-lg scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
-            style={{
-              wordBreak: "break-word",
-              scrollbarWidth: "thin",
-              scrollbarColor: isDark ? "#4b5563 #1f2937" : "#888 #f1f1f1"
-            }}
-          >
-            <span
-              className={`block ${
-                todo.completed ? "line-through text-gray-400" : isDark ? "text-white" : "text-blue-900"
-              }`}
-            >
-              {todo.text}
-            </span>
-          </div>
-        </div>
+         {/* Task Text and Due Date */}
+      <div className="flex flex-col flex-1">
+        <span
+          className={`block ${
+            todo.completed ? "line-through text-gray-400" : isDark ? "text-white" : "text-blue-900"
+          }`}
+        >
+          {todo.text}
+        </span>
+        {/* Due Date Display */}
+        {todo.dueDate && (
+          <span className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
+            Due: {new Date(todo.dueDate).toLocaleDateString()}
+          </span>
+        )}
+      </div>
+    </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 ml-2">
