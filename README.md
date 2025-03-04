@@ -2,6 +2,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+npm install next@latest if npm run dev is not working. 
+npm fund right after 
+then run as usual. 
+
+
 First, run the development server:
 
 ```bash
