@@ -12,6 +12,7 @@ export default function Home() {
 
   // Fix: Avoid accessing localStorage before component mounts
   const [isDark, setIsDark] = useState<boolean | null>(null);
+  const [key, setKey] = useState(0); // Force re-render key
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme") === "dark";
@@ -23,9 +24,12 @@ export default function Home() {
   }
 
   return (
-    <main className={`min-h-screen flex flex-col items-center py-12 px-4 transition-colors duration-300 ${
-      isDark ? "bg-gray-900" : "bg-blue-50"
-    }`}>
+    <main
+      key={key} // This forces a re-render when key changes
+      className={`min-h-screen flex flex-col items-center py-12 px-4 transition-colors duration-300 ${
+        isDark ? "bg-gray-900" : "bg-blue-50"
+      }`}
+    >
       {/* Title, Theme Toggle & Help Button */}
       <div className="w-full max-w-md flex justify-between items-center mb-4">
         {/* Title */}
@@ -48,24 +52,33 @@ export default function Home() {
                 const newTheme = !isDark;
                 setIsDark(newTheme);
                 localStorage.setItem("theme", newTheme ? "dark" : "light");
+
+                // Force re-render
+                setKey((prevKey) => prevKey + 1);
               }}
               className="sr-only"
             />
-            <div className={`w-14 h-7 rounded-full transition ${
-              isDark ? "bg-gray-700" : "bg-blue-500"
-            }`}>
-              <div className={`absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform ${
-                isDark ? "" : "translate-x-7"
-              }`}></div>
+            <div
+              className={`w-14 h-7 rounded-full transition ${
+                isDark ? "bg-gray-700" : "bg-blue-500"
+              }`}
+            >
+              <div
+                className={`absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform ${
+                  isDark ? "" : "translate-x-7"
+                }`}
+              ></div>
             </div>
           </label>
           <span className={`text-sm ${isDark ? "text-gray-400" : "text-blue-700"}`}>☀️</span>
 
           {/* Help Button */}
           <Link href="/help">
-            <button className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition ${
-              isDark ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-black"
-            }`}>
+            <button
+              className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition ${
+                isDark ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-black"
+              }`}
+            >
               ❓ <span>Help</span>
             </button>
           </Link>
