@@ -5,15 +5,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function Help() {
-  const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+  const [isDark, setIsDark] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setIsDark(localStorage.getItem("theme") === "dark");
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    // Ensure this runs only in the browser
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("theme") === "dark";
+      setIsDark(storedTheme);
+    }
   }, []);
 
   return (
