@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 
 interface TodoInputProps {
-  addTodo: (todo: { text: string; dueDate?: string; subTasks?: string[] }) => void;
+  addTodo: (todo: { text: string; description?: string; dueDate?: string; subTasks?: string[] }) => void;
 }
 
 export default function TodoInput({ addTodo }: TodoInputProps) {
   const [task, setTask] = useState("");
+  const [description, setDescription] = useState("");
   const [subTasks, setSubTasks] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [dateError, setDateError] = useState("");
-  const [taskError, setTaskError] = useState(""); // NEW: State for error message
+  const [taskError, setTaskError] = useState("");
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
 
   const handleAdd = () => {
     if (!task.trim()) {
-      setTaskError("Task name cannot be empty."); // Show error if task name is empty
+      setTaskError("Task name cannot be empty.");
       return;
     }
 
@@ -45,61 +46,90 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
 
     addTodo({
       text: task.trim(),
+      description: description.trim() || undefined,
       dueDate: dueDate || undefined,
       subTasks: subTaskArray.length > 0 ? subTaskArray : undefined,
     });
 
     // Reset fields and errors
     setTask("");
+    setDescription("");
     setSubTasks("");
     setDueDate("");
     setDateError("");
-    setTaskError(""); // Clear task error after adding
+    setTaskError("");
   };
 
   return (
-    <div className="flex flex-col w-full max-w-md gap-2">
-      <div className="flex w-full space-x-2">
-        <input
-          type="text"
-          value={task}
-          onChange={(e) => {
-            setTask(e.target.value);
-            setTaskError(""); // Clear error when user starts typing
-          }}
-          className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-            isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
-          }`}
-          placeholder="Enter a task..."
-        />
-        <button
-          onClick={handleAdd}
-          className={`px-4 py-3 rounded-lg transition flex items-center ${
-            isDark
-              ? "bg-blue-500 hover:bg-blue-600 text-white"
-              : "bg-blue-400 hover:bg-blue-500 text-blue-900"
-          }`}
-        >
-          <Plus size={20} />
-        </button>
+    <div className="flex flex-col w-full max-w-md gap-4">
+      {/* Task Name Input */}
+      <div className="flex flex-col gap-1">
+        <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-blue-700"}`}>
+          Task Name *
+        </label>
+        <div className="flex w-full space-x-2">
+          <input
+            type="text"
+            value={task}
+            onChange={(e) => {
+              setTask(e.target.value);
+              setTaskError("");
+            }}
+            className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+            }`}
+            placeholder="Enter task name..."
+          />
+          <button
+            onClick={handleAdd}
+            className={`px-4 py-3 rounded-lg transition flex items-center ${
+              isDark
+                ? "bg-blue-500 hover:bg-blue-600 text-white"
+                : "bg-blue-400 hover:bg-blue-500 text-blue-900"
+            }`}
+          >
+            <Plus size={20} />
+          </button>
+        </div>
+        {taskError && <span className="text-sm text-red-500">{taskError}</span>}
       </div>
 
-      {/* Error Message for Empty Task Name */}
-      {taskError && <span className="text-sm text-red-500 mt-1">{taskError}</span>}
-
-      <textarea
-        value={subTasks}
-        onChange={(e) => setSubTasks(e.target.value)}
-        className={`p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-          isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
-        }`}
-        placeholder="Enter sub-tasks (one per line)"
-        rows={3}
-      />
-
+      {/* Description Input */}
       <div className="flex flex-col gap-1">
-        <label className={`text-sm ${isDark ? "text-gray-400" : "text-blue-700"}`}>
-          Please enter the date your task is due
+        <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-blue-700"}`}>
+          Description (Optional)
+        </label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className={`p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+            isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+          }`}
+          placeholder="Add a description for your task..."
+          rows={2}
+        />
+      </div>
+
+      {/* Sub-tasks Input */}
+      <div className="flex flex-col gap-1">
+        <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-blue-700"}`}>
+          Sub-tasks (Optional)
+        </label>
+        <textarea
+          value={subTasks}
+          onChange={(e) => setSubTasks(e.target.value)}
+          className={`p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+            isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+          }`}
+          placeholder="Enter sub-tasks (one per line)"
+          rows={3}
+        />
+      </div>
+
+      {/* Due Date Input */}
+      <div className="flex flex-col gap-1">
+        <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-blue-700"}`}>
+          Due Date (Optional)
         </label>
         <input
           type="date"
@@ -109,11 +139,11 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
             setDueDate(e.target.value);
             setDateError("");
           }}
-          className={`p-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+          className={`p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
             isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
           }`}
         />
-        {dateError && <span className="text-sm text-red-500 mt-1">{dateError}</span>}
+        {dateError && <span className="text-sm text-red-500">{dateError}</span>}
       </div>
     </div>
   );

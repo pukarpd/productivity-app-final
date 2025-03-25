@@ -15,6 +15,7 @@ interface TodoItemProps {
   todo: {
     id: number;
     text: string;
+    description?: string;
     completed: boolean;
     dueDate?: string;
     subTasks?: SubTask[];
@@ -65,23 +66,27 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo }: TodoItemProps
             />
           </button>
           
-         {/* Task Text and Due Date */}
-      <div className="flex flex-col flex-1">
-        <span
-          className={`block ${
-            todo.completed ? "line-through text-gray-400" : isDark ? "text-white" : "text-blue-900"
-          }`}
-        >
-          {todo.text}
-        </span>
-        {/* Due Date Display */}
-        {todo.dueDate && (
-          <span className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
-            Due: {new Date(todo.dueDate).toLocaleDateString()}
-          </span>
-        )}
-      </div>
-    </div>
+          {/* Task Text, Description and Due Date */}
+          <div className="flex flex-col flex-1">
+            <span
+              className={`block ${
+                todo.completed ? "line-through text-gray-400" : isDark ? "text-white" : "text-blue-900"
+              }`}
+            >
+              {todo.text}
+            </span>
+            {todo.description && (
+              <span className={`text-sm mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
+                {todo.description}
+              </span>
+            )}
+            {todo.dueDate && (
+              <span className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
+                Due: {new Date(todo.dueDate).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+        </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 ml-2">

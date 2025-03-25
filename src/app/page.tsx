@@ -1,16 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-
 import { motion } from "framer-motion";
 import { useTodoStore } from "@/app/useTodoStore";
 import TodoInput from "@/components/TodoInput";
 import TodoList from "@/components/TodoList";
+import Notification from "@/components/Notification";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const { todos, addTodo, toggleTodo, deleteTodo } = useTodoStore();
+  const { todos, addTodo, toggleTodo, deleteTodo, notification, setNotification } = useTodoStore();
 
   // Fix: Avoid accessing localStorage before component mounts
   const [isDark, setIsDark] = useState<boolean | null>(null);
@@ -32,6 +32,15 @@ export default function Home() {
         isDark ? "bg-gray-900" : "bg-blue-50"
       }`}
     >
+      {/* Notification */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
       {/* Title, Theme Toggle & Help Button */}
       <div className="w-full max-w-md flex justify-between items-center mb-4">
         {/* Title */}
