@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, ChevronDown, ChevronUp } from "lucide-react";
-import { useTodoStore } from "@/app/useTodoStore"; // ✅ Import notification hook
+import { useTodoStore } from "@/app/useTodoStore";
 
 interface TodoInputProps {
   addTodo: (todo: { text: string; description?: string; dueDate?: string; subTasks?: string[] }) => void;
@@ -16,7 +16,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
   const [taskError, setTaskError] = useState("");
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
 
-  const { setNotification } = useTodoStore(); // ✅ Use notification system
+  const { setNotification } = useTodoStore();
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -55,10 +55,8 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
       subTasks: subTaskArray.length > 0 ? subTaskArray : undefined,
     });
 
-    // ✅ Trigger success notification
     setNotification({ type: "success", message: "Task added successfully." });
 
-    // Reset fields and errors
     setTask("");
     setDescription("");
     setSubTasks("");
@@ -68,15 +66,26 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
     setShowOptions(false);
   };
 
-  const Label = ({ text }: { text: string }) => (
-    <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-blue-700"}`}>{text}</label>
+  const LabelWithTooltip = ({ label, tooltip }: { label: string; tooltip: string }) => (
+    <label className={`text-base font-semibold flex items-center gap-2 ${isDark ? "text-gray-300" : "text-blue-700"}`}>
+      {label}
+      <div className="relative group cursor-pointer">
+        <span className="text-sm text-blue-400">❓</span>
+        <div className="absolute z-10 w-56 p-2 text-xs text-white bg-gray-700 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 top-[-10px] left-5">
+          {tooltip}
+        </div>
+      </div>
+    </label>
   );
 
   return (
-    <div className="flex flex-col w-full max-w-md gap-4">
+    <div className="flex flex-col w-full max-w-[640px] gap-4">
       {/* Task Name Input */}
       <div className="flex flex-col gap-1">
-        <Label text="Task Name *" />
+        <LabelWithTooltip
+          label="Task Name *"
+          tooltip="What do you need to get done? Add a short title for your task."
+        />
         <div className="flex w-full space-x-2">
           <input
             type="text"
@@ -92,13 +101,18 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
           />
           <button
             onClick={handleAdd}
-            className={`px-4 py-3 rounded-lg transition flex items-center ${
+            disabled={!task.trim()}
+            className={`px-4 py-3 rounded-lg transition flex items-center justify-center font-bold ${
               isDark
-                ? "bg-blue-500 hover:bg-blue-600 text-white"
-                : "bg-blue-400 hover:bg-blue-500 text-blue-900"
+                ? task.trim()
+                  ? "bg-blue-400 hover:bg-blue-500 text-white shadow-lg"
+                  : "bg-blue-800 text-white/40 cursor-not-allowed"
+                : task.trim()
+                ? "bg-blue-500 hover:bg-blue-600 text-white shadow-md"
+                : "bg-blue-200 text-blue-500 cursor-not-allowed"
             }`}
           >
-            <Plus size={20} />
+            <span className="text-xl">+</span>
           </button>
         </div>
         {taskError && <span className="text-sm text-red-500">{taskError}</span>}
@@ -118,9 +132,12 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
       {/* Optional Fields */}
       {showOptions && (
         <>
-          {/* Description Input */}
+          {/* Description */}
           <div className="flex flex-col gap-1">
-            <Label text="Description (Optional)" />
+            <LabelWithTooltip
+              label="Description (Optional)"
+              tooltip="Optional: add more detail so you know what this task is about."
+            />
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -132,9 +149,12 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
             />
           </div>
 
-          {/* Sub-tasks Input */}
+          {/* Sub-tasks */}
           <div className="flex flex-col gap-1">
-            <Label text="Sub-tasks (Optional)" />
+            <LabelWithTooltip
+              label="Sub-tasks (Optional)"
+              tooltip="Optional: break this task into smaller steps. One per line."
+            />
             <textarea
               value={subTasks}
               onChange={(e) => setSubTasks(e.target.value)}
@@ -146,9 +166,12 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
             />
           </div>
 
-          {/* Due Date Input */}
+          {/* Due Date */}
           <div className="flex flex-col gap-1">
-            <Label text="Due Date (Optional)" />
+            <LabelWithTooltip
+              label="Due Date (Optional)"
+              tooltip="Optional: select when this task should be finished."
+            />
             <input
               type="date"
               value={dueDate}
@@ -157,7 +180,6 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
                 setDueDate(e.target.value);
                 setDateError("");
 
-                // ✅ Trigger due date feedback
                 if (e.target.value) {
                   const formatted = new Date(e.target.value).toLocaleDateString();
                   setNotification({
