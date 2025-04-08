@@ -135,7 +135,7 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: T
         </div>
       </div>
 
-      {/* Sub-Tasks List */}
+      {/* Sub-Tasks List. */}
       {todo.subTasks && todo.subTasks.length > 0 && (
         <ul className="ml-8 mt-2 space-y-2">
           {todo.subTasks.map((subTask) => (
