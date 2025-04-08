@@ -30,20 +30,21 @@ export default function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProp
   // Sort todos based on the selected option
   const sortedTodos = [...todos].sort((a, b) => {
     if (sortBy === "dueDate") {
-      // Sort by due date (earliest first)
       if (a.dueDate && b.dueDate) {
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
       }
-      // Tasks without due dates go to the bottom
       return a.dueDate ? -1 : b.dueDate ? 1 : 0;
     } else {
-      // Default sorting: incomplete first, completed last
-      if (a.completed === b.completed) {
-        return todos.indexOf(a) - todos.indexOf(b);
+      // Default sort: incomplete first, then by ID
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
       }
-      return a.completed ? 1 : -1;
+      return a.id - b.id;
     }
   });
+
+  // 🔒 Lock the ID of the top task
+  const priorityTaskId = sortedTodos[0]?.id;
 
   return (
     <div className="mt-6 w-full max-w-md">
@@ -84,6 +85,7 @@ export default function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProp
             todo={todo} 
             toggleTodo={toggleTodo} 
             deleteTodo={deleteTodo}
+            isPriority={todo.id === priorityTaskId}
           />
         ))
       )}

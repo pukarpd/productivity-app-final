@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle, Settings, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useTodoStore } from "@/app/useTodoStore"; // Import the store
+import { useTodoStore } from "@/app/useTodoStore";
 
 interface SubTask {
   id: number;
@@ -22,11 +22,12 @@ interface TodoItemProps {
   };
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
+  isPriority?: boolean;
 }
 
-export default function TodoItem({ todo, toggleTodo, deleteTodo }: TodoItemProps) {
+export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: TodoItemProps) {
   const [isSpinning, setIsSpinning] = useState(false);
-  const { toggleSubTask } = useTodoStore(); // Access the toggleSubTask action
+  const { toggleSubTask } = useTodoStore();
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
 
   useEffect(() => {
@@ -47,7 +48,15 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo }: TodoItemProps
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className={`p-4 mb-2 rounded-lg ${isDark ? "bg-gray-800" : "bg-blue-100"}`}
+      className={`p-4 mb-2 rounded-lg border transition-all ${
+        isPriority
+          ? isDark
+            ? "bg-yellow-900 border-yellow-600"
+            : "bg-yellow-100 border-yellow-400"
+          : isDark
+          ? "bg-gray-800 border-gray-700"
+          : "bg-blue-100 border-blue-200"
+      }`}
     >
       {/* Main Todo Row */}
       <div className="flex items-center justify-between">
@@ -65,21 +74,27 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo }: TodoItemProps
               strokeWidth={todo.completed ? 2.5 : 1.5}
             />
           </button>
-          
+
           {/* Task Text, Description and Due Date */}
           <div className="flex flex-col flex-1">
             <span
-              className={`block ${
-                todo.completed ? "line-through text-gray-400" : isDark ? "text-white" : "text-blue-900"
+              className={`block font-medium ${
+                todo.completed
+                  ? "line-through text-gray-400"
+                  : isDark
+                  ? "text-white"
+                  : "text-blue-900"
               }`}
             >
               {todo.text}
             </span>
+
             {todo.description && (
               <span className={`text-sm mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
                 {todo.description}
               </span>
             )}
+
             {todo.dueDate && (
               <span className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
                 Due: {new Date(todo.dueDate).toLocaleDateString()}
