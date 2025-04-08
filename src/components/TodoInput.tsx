@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTodoStore } from "@/app/useTodoStore";
 
 interface TodoInputProps {
