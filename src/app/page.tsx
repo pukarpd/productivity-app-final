@@ -5,6 +5,7 @@ import { useTodoStore } from "@/app/useTodoStore";
 import TodoInput from "@/components/TodoInput";
 import TodoList from "@/components/TodoList";
 import Notification from "@/components/Notification";
+import ProgressBar from "@/components/ProgressBar";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -24,9 +25,13 @@ export default function Home() {
     return null; // Prevent rendering until the theme is determined
   }
 
+  // Calculate completion stats
+  const completedTasks = todos.filter(todo => todo.completed).length;
+  const totalTasks = todos.length;
+
   return (
     <main
-      key={key} // This forces a re-render when key changes
+      key={key}
       className={`min-h-screen flex flex-col items-center py-12 px-4 transition-colors duration-300 ${
         isDark ? "bg-gray-900" : "bg-blue-50"
       }`}
@@ -62,8 +67,6 @@ export default function Home() {
                 const newTheme = !isDark;
                 setIsDark(newTheme);
                 localStorage.setItem("theme", newTheme ? "dark" : "light");
-
-                // Force re-render
                 setKey((prevKey) => prevKey + 1);
               }}
               className="sr-only"
@@ -85,19 +88,35 @@ export default function Home() {
           {/* Help Button */}
           <Link href="/help">
             <button
-              className={`px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition ${
+              className={`p-2 rounded-md text-xs font-semibold flex items-center transition ${
                 isDark ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-black"
               }`}
             >
-              ❓ <span>Help</span>
+              ❓
             </button>
           </Link>
         </div>
       </div>
 
-      {/* Todo Input & List */}
-      <TodoInput addTodo={addTodo} />
-      <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+      {/* Todo Input & List with Progress Bar */}
+      <div className="flex gap-8 w-full max-w-4xl">
+        {/* Progress Bar */}
+        <div className="flex-shrink-0">
+          <ProgressBar 
+            completed={completedTasks} 
+            total={totalTasks} 
+            isDark={isDark} 
+          />
+        </div>
+
+        {/* Todo Content */}
+        <div className="flex-grow max-w-md">
+          <TodoInput addTodo={addTodo} />
+          <div className="mt-28">
+            <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

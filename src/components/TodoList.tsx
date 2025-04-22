@@ -1,6 +1,7 @@
 import TodoItem from "./TodoItem";
 import { useTodoStore } from "@/app/useTodoStore";
 import { useState, useEffect } from "react";
+import { Trash2 } from "lucide-react";
 
 interface TodoListProps {
   todos: { 
@@ -63,13 +64,13 @@ export default function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProp
 
         <button
           onClick={clearCompleted}
-          className={`px-3 py-2 rounded-lg ${
+          className={`p-2 rounded-lg ${
             isDark
               ? "bg-red-500 hover:bg-red-600 text-white"
               : "bg-red-400 hover:bg-red-500 text-red-900"
           }`}
         >
-          Clear Completed
+          <Trash2 size={24} />
         </button>
       </div>
 

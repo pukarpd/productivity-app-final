@@ -95,7 +95,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
               setTaskError("");
             }}
             className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-              isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+              isDark ? "bg-[#CD5C5C]/40 text-white" : "bg-blue-200 text-blue-900"
             }`}
             placeholder="Enter task name..."
           />
@@ -126,7 +126,6 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
         }`}
       >
         {showOptions ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        {showOptions ? "Hide Options" : "More Options"}
       </button>
 
       {/* Optional Fields */}
@@ -142,7 +141,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className={`p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-                isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+                isDark ? "bg-[#CD5C5C]/40 text-white" : "bg-blue-200 text-blue-900"
               }`}
               placeholder="Add a description for your task..."
               rows={2}
@@ -159,7 +158,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
               value={subTasks}
               onChange={(e) => setSubTasks(e.target.value)}
               className={`p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-                isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+                isDark ? "bg-[#CD5C5C]/40 text-white" : "bg-blue-200 text-blue-900"
               }`}
               placeholder="Enter sub-tasks (one per line)"
               rows={3}
@@ -189,7 +188,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
                 }
               }}
               className={`p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
-                isDark ? "bg-gray-800 text-white" : "bg-blue-100 text-blue-900"
+                isDark ? "bg-[#CD5C5C]/40 text-white" : "bg-blue-200 text-blue-900"
               }`}
             />
             {dateError && <span className="text-sm text-red-500">{dateError}</span>}

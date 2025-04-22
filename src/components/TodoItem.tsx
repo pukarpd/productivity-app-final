@@ -23,9 +23,10 @@ interface TodoItemProps {
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
   isPriority?: boolean;
+  className?: string;
 }
 
-export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: TodoItemProps) {
+export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority, className }: TodoItemProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const { toggleSubTask } = useTodoStore();
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
@@ -48,7 +49,7 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: T
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className={`p-4 mb-2 rounded-lg border transition-all ${
+      className={`p-4 mb-2 rounded-lg border transition-all max-w-xs ${className || ''} ${
         isPriority
           ? isDark
             ? "bg-yellow-900 border-yellow-600"
@@ -60,10 +61,10 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: T
     >
       {/* Main Todo Row */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center flex-1">
+        <div className="flex items-center flex-1 min-w-0">
           <button
             onClick={() => toggleTodo(todo.id)}
-            className="mr-2 hover:opacity-80 transition-opacity"
+            className="mr-2 hover:opacity-80 transition-opacity flex-shrink-0"
           >
             <CheckCircle
               className={`w-6 h-6 ${
@@ -76,9 +77,9 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: T
           </button>
 
           {/* Task Text, Description and Due Date */}
-          <div className="flex flex-col flex-1">
+          <div className="flex flex-col flex-1 min-w-0">
             <span
-              className={`block font-medium ${
+              className={`block font-medium truncate ${
                 todo.completed
                   ? "line-through text-gray-400"
                   : isDark
@@ -90,13 +91,15 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: T
             </span>
 
             {todo.description && (
-              <span className={`text-sm mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
-                {todo.description}
-              </span>
+              <div className="mt-4 pt-2 border-t border-gray-300 dark:border-gray-600">
+                <span className={`text-sm truncate ${isDark ? "text-gray-400" : "text-blue-700"}`}>
+                  {todo.description}
+                </span>
+              </div>
             )}
 
             {todo.dueDate && (
-              <span className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
+              <span className={`text-xs mt-2 ${isDark ? "text-gray-400" : "text-blue-700"}`}>
                 Due: {new Date(todo.dueDate).toLocaleDateString()}
               </span>
             )}
@@ -104,26 +107,19 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority }: T
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 ml-2">
-          <div className="flex items-center gap-1">
-            <button
-              className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
-                isDark ? "hover:bg-gray-700" : "hover:bg-blue-200"
+        <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+          <button
+            className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
+              isDark ? "hover:bg-gray-700" : "hover:bg-blue-200"
+            }`}
+            onClick={handleGearClick}
+          >
+            <Settings
+              className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""} ${
+                isDark ? "text-orange-400" : "text-orange-500"
               }`}
-              onClick={handleGearClick}
-            >
-              <Settings
-                className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""} ${
-                  isDark ? "text-orange-400" : "text-orange-500"
-                }`}
-              />
-            </button>
-            {isSpinning && (
-              <span className={`text-xs ${isDark ? "text-gray-400" : "text-blue-700"}`}>
-                In progress...
-              </span>
-            )}
-          </div>
+            />
+          </button>
           <button
             onClick={() => deleteTodo(todo.id)}
             className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
