@@ -1,3 +1,4 @@
+// TodoList.tsx - Add tooltip to the "Clear Completed" button
 import TodoItem from "./TodoItem";
 import { useTodoStore } from "@/app/useTodoStore";
 import { useState, useEffect } from "react";
@@ -18,6 +19,7 @@ export default function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProp
   const { clearCompleted } = useTodoStore();
   const [sortBy, setSortBy] = useState<"default" | "dueDate">("default");
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+  const [showDeleteTooltip, setShowDeleteTooltip] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -62,16 +64,32 @@ export default function TodoList({ todos, toggleTodo, deleteTodo }: TodoListProp
           <option value="dueDate">Sort by Due Date</option>
         </select>
 
-        <button
-          onClick={clearCompleted}
-          className={`p-2 rounded-lg ${
-            isDark
-              ? "bg-red-500 hover:bg-red-600 text-white"
-              : "bg-red-400 hover:bg-red-500 text-red-900"
-          }`}
-        >
-          <Trash2 size={24} />
-        </button>
+        {/* Delete button with tooltip */}
+        <div className="relative">
+          <button
+            onClick={clearCompleted}
+            onMouseEnter={() => setShowDeleteTooltip(true)}
+            onMouseLeave={() => setShowDeleteTooltip(false)}
+            className={`p-2 rounded-lg ${
+              isDark
+                ? "bg-red-500 hover:bg-red-600 text-white"
+                : "bg-red-400 hover:bg-red-500 text-red-900"
+            }`}
+          >
+            <Trash2 size={32} />
+          </button>
+          
+          {/* Tooltip */}
+          {showDeleteTooltip && (
+            <div 
+              className={`absolute right-0 bottom-full mb-2 py-1 px-2 rounded text-sm ${
+                isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+              } shadow-lg whitespace-nowrap z-10`}
+            >
+              Delete all completed tasks
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Task List */}

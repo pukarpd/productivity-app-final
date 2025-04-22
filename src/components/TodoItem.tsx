@@ -1,3 +1,4 @@
+// TodoItem.tsx - Add tooltips for delete and settings buttons
 "use client";
 
 import { motion } from "framer-motion";
@@ -30,6 +31,8 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority, cla
   const [isSpinning, setIsSpinning] = useState(false);
   const { toggleSubTask } = useTodoStore();
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+  const [showDeleteTooltip, setShowDeleteTooltip] = useState(false);
+  const [showSettingsTooltip, setShowSettingsTooltip] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -41,8 +44,7 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority, cla
   }, []);
 
   const handleGearClick = () => {
-    setIsSpinning(true);
-    setTimeout(() => setIsSpinning(false), 1000);
+    setIsSpinning(prevState => !prevState);
   };
 
   return (
@@ -108,26 +110,59 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, isPriority, cla
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-          <button
-            className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
-              isDark ? "hover:bg-gray-700" : "hover:bg-blue-200"
-            }`}
-            onClick={handleGearClick}
-          >
-            <Settings
-              className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""} ${
-                isDark ? "text-orange-400" : "text-orange-500"
+          {/* Settings button with tooltip */}
+          <div className="relative">
+            <button
+              className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-blue-200"
               }`}
-            />
-          </button>
-          <button
-            onClick={() => deleteTodo(todo.id)}
-            className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
-              isDark ? "hover:bg-gray-700" : "hover:bg-blue-200"
-            }`}
-          >
-            <Trash2 className={`w-5 h-5 ${isDark ? "text-red-400" : "text-red-500"}`} />
-          </button>
+              onClick={handleGearClick}
+              onMouseEnter={() => setShowSettingsTooltip(true)}
+              onMouseLeave={() => setShowSettingsTooltip(false)}
+            >
+              <Settings
+                className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""} ${
+                  isDark ? "text-orange-400" : "text-orange-500"
+                }`}
+              />
+            </button>
+            
+            {/* Settings Tooltip */}
+            {showSettingsTooltip && (
+              <div 
+                className={`absolute right-0 bottom-full mb-2 py-1 px-2 rounded text-sm ${
+                  isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+                } shadow-lg whitespace-nowrap z-10`}
+              >
+                Start Working on this Task
+              </div>
+            )}
+          </div>
+          
+          {/* Delete button with tooltip */}
+          <div className="relative">
+            <button
+              onClick={() => deleteTodo(todo.id)}
+              onMouseEnter={() => setShowDeleteTooltip(true)}
+              onMouseLeave={() => setShowDeleteTooltip(false)}
+              className={`p-1 rounded-full hover:opacity-80 transition-opacity ${
+                isDark ? "hover:bg-gray-700" : "hover:bg-blue-200"
+              }`}
+            >
+              <Trash2 className={`w-5 h-5 ${isDark ? "text-red-400" : "text-red-500"}`} />
+            </button>
+            
+            {/* Delete Tooltip */}
+            {showDeleteTooltip && (
+              <div 
+                className={`absolute right-0 bottom-full mb-2 py-1 px-2 rounded text-sm ${
+                  isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+                } shadow-lg whitespace-nowrap z-10`}
+              >
+                Delete this task
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+// TodoInput.tsx - Add tooltip to the dropdown button
 import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTodoStore } from "@/app/useTodoStore";
@@ -15,6 +16,7 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
   const [dateError, setDateError] = useState("");
   const [taskError, setTaskError] = useState("");
   const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
+  const [showDropdownTooltip, setShowDropdownTooltip] = useState(false);
 
   const { setNotification } = useTodoStore();
 
@@ -118,15 +120,31 @@ export default function TodoInput({ addTodo }: TodoInputProps) {
         {taskError && <span className="text-sm text-red-500">{taskError}</span>}
       </div>
 
-      {/* Toggle Optional Fields */}
-      <button
-        onClick={() => setShowOptions((prev) => !prev)}
-        className={`text-sm font-medium self-start flex items-center gap-1 transition ${
-          isDark ? "text-blue-300 hover:text-white" : "text-blue-700 hover:text-blue-900"
-        }`}
-      >
-        {showOptions ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-      </button>
+      {/* Toggle Optional Fields with Tooltip */}
+      <div className="relative inline-block self-start">
+        <button
+          onClick={() => setShowOptions((prev) => !prev)}
+          onMouseEnter={() => setShowDropdownTooltip(true)}
+          onMouseLeave={() => setShowDropdownTooltip(false)}
+          className={`text-sm font-medium flex items-center gap-1 transition ${
+            isDark ? "text-blue-300 hover:text-white" : "text-blue-700 hover:text-blue-900"
+          }`}
+        >
+          {showOptions ? <ChevronUp size={40} /> : <ChevronDown size={40} />}
+          {/* {showOptions ? "Hide options" : "Show options"} */}
+        </button>
+        
+        {/* Tooltip */}
+        {showDropdownTooltip && (
+          <div 
+            className={`absolute left-0 bottom-full mb-2 py-1 px-2 rounded text-sm ${
+              isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+            } shadow-lg whitespace-nowrap z-10`}
+          >
+            {showOptions ? "Hide optional task details" : "Show additional task options"}
+          </div>
+        )}
+      </div>
 
       {/* Optional Fields */}
       {showOptions && (
